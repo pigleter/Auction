@@ -18,6 +18,7 @@ import { FilterPipe } from './pipe/filter.pipe';
 import {HttpModule} from '@angular/http';
 import {WebSocketService} from './shared/web-socket.service';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 
 const routeConfig: Routes = [
   {path: '', component: HomeComponent},
@@ -42,7 +43,7 @@ const routeConfig: Routes = [
     RouterModule.forRoot(routeConfig),
     FormsModule,
     ReactiveFormsModule,
-    HttpModule
+    HttpClientModule
   ],
   providers: [
     ProductService,

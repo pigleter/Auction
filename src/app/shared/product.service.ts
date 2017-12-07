@@ -1,13 +1,15 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {Http, URLSearchParams, Headers} from '@angular/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 
 @Injectable()
 export class ProductService {
 
   searchEvent: EventEmitter<ProductSearchParams> = new EventEmitter();
 
-  constructor(private http: Http) {
+  constructor(
+    private httpClient: HttpClient
+  ) {
   }
 
   getAllCategories(): string[] {
@@ -15,34 +17,29 @@ export class ProductService {
   }
 
   getProducts(): Observable<Product[]> {
-    return this.http.get('http://localhost:8000/api/products', {headers: this.getHeaders()}).map(res => res.json());
+    return this.httpClient.get('/api/products').map(res => <any>res);
   }
 
   getProduct(id: number): Observable<Product> {
-    return this.http.get('http://localhost:8000/api/product/' + id).map(res => res.json());
+    return this.httpClient.get('/api/product/' + id).map(res => <any>res);
   }
 
   getCommmentsForProductId(id: number): Observable<Comment[]> {
-    return this.http.get('http://localhost:8000/api/product/' + id + '/comments').map(res => res.json());
+    return this.httpClient.get('/api/product/' + id + '/comments').map(res => <any>res);
   }
 
   search(params: ProductSearchParams): Observable<Product[]> {
-    return this.http.get('http://localhost:8000/api/products', {search: this.encodeParams(params)}).map(res => res.json());
+    return this.httpClient.get('/api/products', {params: this.encodeParams(params)}).map(res => <any>res);
   }
 
-  private encodeParams(params: ProductSearchParams): URLSearchParams {
+  private encodeParams(params: ProductSearchParams): HttpParams {
     return Object.keys(params)
       .filter(key => params[key])
-      .reduce((sum: URLSearchParams, key: string) => {
-      sum.append(key, params[key]);
-      return sum;
-      }, new URLSearchParams());
+      .reduce((sum: HttpParams, key: string) => {
+        sum = sum.append(key, params[key]);
+        return sum;
+      }, new HttpParams());
   }
-
-  private getHeaders(): Headers {
-    let hd: Headers = new Headers({'Access-Control-Allow-Origin': '*'});
-    return hd;
-}
 
 }
 
